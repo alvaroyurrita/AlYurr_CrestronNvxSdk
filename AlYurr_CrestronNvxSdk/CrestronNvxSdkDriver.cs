@@ -23,7 +23,32 @@ public partial class CrestribNvxSdk
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly JsonSerializerOptions _jsonOptions;
 
+    private IDeviceInfoManager? _deviceInfoManager;
+    private IDeviceCapabilitiesManager? _deviceCapabilitiesManager;
+    private IAvRoutingManager? _avRoutingManager;
+    private IAudioVideoInputOutputManager? _audioVideoInputOutputManager;
+
     public NvxState NvxState { get; internal set; } = new();
+
+    /// <summary>
+    /// Gets the device information manager.
+    /// </summary>
+    public IDeviceInfoManager DeviceInfo => _deviceInfoManager!;
+
+    /// <summary>
+    /// Gets the device capabilities manager.
+    /// </summary>
+    public IDeviceCapabilitiesManager DeviceCapabilities => _deviceCapabilitiesManager!;
+
+    /// <summary>
+    /// Gets the routing manager.
+    /// </summary>
+    public IAvRoutingManager Routing => _avRoutingManager!;
+
+    /// <summary>
+    /// Gets the audio/video input/output manager.
+    /// </summary>
+    public IAudioVideoInputOutputManager AudioVideo => _audioVideoInputOutputManager!;
 
     /// <summary>
     /// Gets or sets the connection timeout.
@@ -60,6 +85,17 @@ public partial class CrestribNvxSdk
         _jsonOptions = new JsonSerializerOptions();
         _jsonOptions.Converters.Add(new JsonInt32Converter());
         _jsonOptions.PropertyNameCaseInsensitive = true;
+
+        // Initialize managers
+        InitializeManagers();
+    }
+
+    private void InitializeManagers()
+    {
+        _deviceInfoManager = new DeviceInfoManager(_httpService, null);
+        _deviceCapabilitiesManager = new DeviceCapabilitiesManager(_httpService, null);
+        _avRoutingManager = new AvRoutingManager(_httpService, null);
+        _audioVideoInputOutputManager = new AudioVideoInputOutputManager(_httpService, null);
     }
     /// <summary>
     /// Connects to the NVX device and initializes the state.
@@ -152,10 +188,82 @@ public partial class CrestribNvxSdk
         {
             _logger.Debug("Processing WebSocket message update");
             NvxState.MergeJson(e.Message);
+            
+            // Route messages to appropriate managers
+            RouteMessageToManagers(e.Message);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Error processing WebSocket message");
+        }
+    }
+
+    private void RouteMessageToManagers(string jsonMessage)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(jsonMessage);
+            var root = doc.RootElement;
+
+            // Route to DeviceInfo manager
+            if (root.TryGetProperty("Device", out var deviceElement))
+            {
+                if (_deviceInfoManager is DeviceInfoManager dimgr)
+                {
+                    var deviceJson = deviceElement.GetRawText();
+                    var deviceInfo = JsonSerializer.Deserialize<Models.DeviceInfo.DeviceInfoDto>(deviceJson, _jsonOptions);
+                    if (deviceInfo != null)
+                    {
+                        dimgr.State.Data = deviceInfo;
+                    }
+                }
+            }
+
+            // Route to DeviceCapabilities manager
+            if (root.TryGetProperty("Capabilities", out var capElement))
+            {
+                if (_deviceCapabilitiesManager is DeviceCapabilitiesManager dcmgr)
+                {
+                    var capJson = capElement.GetRawText();
+                    var capabilities = JsonSerializer.Deserialize<Models.DeviceCapabilities.DeviceCapabilitiesDto>(capJson, _jsonOptions);
+                    if (capabilities != null)
+                    {
+                        dcmgr.State.Data = capabilities;
+                    }
+                }
+            }
+
+            // Route to AvRouting manager
+            if (root.TryGetProperty("Routing", out var routingElement))
+            {
+                if (_avRoutingManager is AvRoutingManager amgr)
+                {
+                    var routingJson = routingElement.GetRawText();
+                    var routing = JsonSerializer.Deserialize<Models.AvRouting.AvRoutingDto>(routingJson, _jsonOptions);
+                    if (routing != null)
+                    {
+                        amgr.State.Data = routing;
+                    }
+                }
+            }
+
+            // Route to AudioVideoInputOutput manager
+            if (root.TryGetProperty("AudioVideoInputOutput", out var avElement))
+            {
+                if (_audioVideoInputOutputManager is AudioVideoInputOutputManager avmgr)
+                {
+                    var avJson = avElement.GetRawText();
+                    var audioVideo = JsonSerializer.Deserialize<Models.AudioVideoInputOutput.AudioVideoInputOutputDto>(avJson, _jsonOptions);
+                    if (audioVideo != null)
+                    {
+                        avmgr.State.Data = audioVideo;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(ex, "Error routing message to managers");
         }
     }
 

@@ -17,7 +17,7 @@ var sdk = new CrestronNvxSdkBuilder()
 await sdk.ConnectAsync();
 
 // Option B: Direct Constructor (Legacy)
-var sdk = new CrestribNvxSdk("192.168.1.100", "admin", "password");
+var sdk = new CrestronNvxSdk("192.168.1.100", "admin", "password");
 await sdk.ConnectAsync();
 ```
 
@@ -100,7 +100,7 @@ var state = wsService.State; // WebSocketState enum
 
 ## Configuration Properties
 
-### CrestribNvxSdk Properties
+### CrestronNvxSdk Properties
 
 ```csharp
 // Get/set timeout for operations

@@ -12,7 +12,7 @@ namespace AlYurr_CrestronNvxSdk;
 /// <summary>
 /// Main SDK class for communicating with Crestron NVX devices.
 /// </summary>
-public partial class CrestribNvxSdk
+public partial class CrestronNvxSdk
 {
     private readonly string _ipAddress;
     private readonly string _username;
@@ -87,14 +87,14 @@ public partial class CrestribNvxSdk
     /// </summary>
     public bool IsConnected => _webSocketService.State == WebSocketState.Open;
 
-    public CrestribNvxSdk(string ipAddress, string username, string password, ILogger? logger = null)
+    public CrestronNvxSdk(string ipAddress, string username, string password, ILogger? logger = null)
     {
         _ipAddress = ipAddress;
         _username = username;
         _password = password;
         _logger = logger == null
-            ? Log.Logger.ForContext<CrestribNvxSdk>()
-            : logger.ForContext<CrestribNvxSdk>();
+            ? Log.Logger.ForContext<CrestronNvxSdk>()
+            : logger.ForContext<CrestronNvxSdk>();
         
         _httpService = new HttpService(_logger);
         _webSocketService = new WebSocketService(_logger);

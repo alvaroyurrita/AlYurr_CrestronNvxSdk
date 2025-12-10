@@ -14,7 +14,7 @@ Phase 3 is complete with full manager integration, WebSocket event routing, and 
 using AlYurr_CrestronNvxSdk;
 
 // Create SDK instance
-var sdk = new CrestribNvxSdk(
+var sdk = new CrestronNvxSdk(
     ipAddress: "192.168.1.100",
     username: "admin",
     password: "password"
@@ -365,11 +365,11 @@ using AlYurr_CrestronNvxSdk.Exceptions;
 
 class NvxMonitor
 {
-    private readonly CrestribNvxSdk _sdk;
+    private readonly CrestronNvxSdk _sdk;
 
     public NvxMonitor(string ipAddress, string username, string password)
     {
-        _sdk = new CrestribNvxSdk(ipAddress, username, password);
+        _sdk = new CrestronNvxSdk(ipAddress, username, password);
     }
 
     public async Task RunAsync()
@@ -449,7 +449,7 @@ class Program
 ### Manager Architecture
 
 ```
-CrestribNvxSdk (Main SDK)
+CrestronNvxSdk (Main SDK)
 ├── DeviceInfoManager -> DeviceInfoState
 ├── DeviceCapabilitiesManager -> DeviceCapabilitiesState
 ├── AvRoutingManager -> AvRoutingState

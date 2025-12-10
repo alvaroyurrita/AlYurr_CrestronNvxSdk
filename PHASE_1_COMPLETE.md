@@ -69,7 +69,7 @@ var sdk = new CrestronNvxSdkBuilder()
 
 ### 5. **Enhanced Main SDK Class**
 
-#### CrestribNvxSdk Updates
+#### CrestronNvxSdk Updates
 - Integrated service layer (IHttpService, IWebSocketService)
 - Configuration properties: `Timeout`, `AutoReconnect`, `MaxRetries`
 - Connection state: `IsConnected` property
@@ -101,7 +101,7 @@ var sdk = new CrestronNvxSdkBuilder()
 
 ```
 ┌──────────────────────────────────────────┐
-│   CrestribNvxSdk (Main Entry Point)     │
+│   CrestronNvxSdk (Main Entry Point)     │
 │   - Configuration (Timeout, Retry, etc) │
 │   - Connection Management               │
 │   - Event Coordination                  │

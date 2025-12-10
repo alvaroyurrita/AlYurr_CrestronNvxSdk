@@ -123,7 +123,7 @@ Build Time:       ~1.8 seconds
 
 ## API Surface After Phase 3
 
-### Main SDK Class (CrestribNvxSdk)
+### Main SDK Class (CrestronNvxSdk)
 
 **Public Properties:**
 ```csharp
@@ -199,7 +199,7 @@ Task SendCecCommandAsync(string outputUuid, string cecCommand)
 
 ```csharp
 // Create and connect
-var sdk = new CrestribNvxSdk("192.168.1.100", "admin", "password");
+var sdk = new CrestronNvxSdk("192.168.1.100", "admin", "password");
 await sdk.ConnectAsync();
 
 // Use managers
@@ -278,9 +278,9 @@ Device (NVX Hardware)
          │
          └─→ IWebSocketService.MessageReceived Event
               │
-              └─→ CrestribNvxSdk.OnWebSocketMessageReceived()
+              └─→ CrestronNvxSdk.OnWebSocketMessageReceived()
                    │
-                   └─→ CrestribNvxSdk.RouteMessageToManagers()
+                   └─→ CrestronNvxSdk.RouteMessageToManagers()
                         │
                         ├─→ Check for "Device" property → DeviceInfoManager
                         ├─→ Check for "Capabilities" property → DeviceCapabilitiesManager

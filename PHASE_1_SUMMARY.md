@@ -83,7 +83,7 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│          CrestribNvxSdk                         │
+│          CrestronNvxSdk                         │
 │  (Main Entry Point with Manager Integration)    │
 └──────────────────┬──────────────────────────────┘
                    │

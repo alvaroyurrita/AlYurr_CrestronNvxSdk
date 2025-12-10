@@ -23,7 +23,7 @@
 - ✅ **StateBase/NvxState** - State management with change notifications
 - ✅ **Exception Hierarchy** - 6 custom exception types
 - ✅ **CrestronNvxSdkBuilder** - Fluent configuration API
-- ✅ **Refactored CrestribNvxSdk** - Integrated service layer
+- ✅ **Refactored CrestronNvxSdk** - Integrated service layer
 
 ### Documentation Provided
 1. ✅ **SDK_ARCHITECTURE_PLAN.md** (14.6 KB)
@@ -79,7 +79,7 @@
 
 ```
 ┌─────────────────────────────┐
-│   CrestribNvxSdk (Main)     │
+│   CrestronNvxSdk (Main)     │
 │  - Configuration            │
 │  - Connection Management    │
 │  - State Tracking           │

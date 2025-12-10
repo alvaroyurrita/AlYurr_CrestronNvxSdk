@@ -5,7 +5,7 @@ namespace AlYurr_CrestronNvxSdk;
 /// <summary>
 /// Partial class for message parsing functionality.
 /// </summary>
-public partial class CrestribNvxSdk
+public partial class CrestronNvxSdk
 {
     /// <summary>
     /// Parses a complete device state message and updates internal state.

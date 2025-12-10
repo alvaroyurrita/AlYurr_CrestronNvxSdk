@@ -196,11 +196,11 @@ All in **Namespace**: `AlYurr_CrestronNvxSdk.Exceptions`
   - `WithTimeout(timeout)` → `CrestronNvxSdkBuilder`
   - `WithAutoReconnect(enabled)` → `CrestronNvxSdkBuilder`
   - `WithMaxRetries(maxRetries)` → `CrestronNvxSdkBuilder`
-  - `Build()` → `CrestribNvxSdk`
+  - `Build()` → `CrestronNvxSdk`
 
 ### Modified Main SDK Class
 
-#### CrestribNvxSdk
+#### CrestronNvxSdk
 - **Namespace**: `AlYurr_CrestronNvxSdk`
 - **Status**: REFACTORED
 - **New Properties**:

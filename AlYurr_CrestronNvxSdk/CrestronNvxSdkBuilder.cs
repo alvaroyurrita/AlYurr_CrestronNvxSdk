@@ -4,7 +4,7 @@ using AlYurr_CrestronNvxSdk.Services;
 namespace AlYurr_CrestronNvxSdk;
 
 /// <summary>
-/// Builder for configuring and creating CrestribNvxSdk instances.
+/// Builder for configuring and creating CrestronNvxSdk instances.
 /// </summary>
 public class CrestronNvxSdkBuilder
 {
@@ -92,14 +92,14 @@ public class CrestronNvxSdkBuilder
     }
 
     /// <summary>
-    /// Builds the CrestribNvxSdk instance with the configured settings.
+    /// Builds the CrestronNvxSdk instance with the configured settings.
     /// </summary>
-    public CrestribNvxSdk Build()
+    public CrestronNvxSdk Build()
     {
         if (string.IsNullOrEmpty(_ipAddress))
             throw new InvalidOperationException("Device IP address must be configured. Call WithDevice() first.");
 
-        var sdk = new CrestribNvxSdk(_ipAddress, _username, _password, _logger)
+        var sdk = new CrestronNvxSdk(_ipAddress, _username, _password, _logger)
         {
             Timeout = _timeout,
             AutoReconnect = _autoReconnect,

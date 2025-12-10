@@ -1,5 +1,6 @@
 using Xunit;
 using AlYurr_CrestronNvxSdk;
+using AlYurr_CrestronNvxSdk.Services;
 
 namespace AlYurr_CrestronNvxSdk.Tests;
 
@@ -48,7 +49,7 @@ public class SmokeTests
     public void HttpService_CanBeCreated()
     {
         // Arrange & Act
-        var service = new Services.HttpService();
+        var service = new HttpService();
 
         // Assert
         Assert.NotNull(service);

@@ -27,8 +27,14 @@ public partial class CrestribNvxSdk
     private IDeviceCapabilitiesManager? _deviceCapabilitiesManager;
     private IAvRoutingManager? _avRoutingManager;
     private IAudioVideoInputOutputManager? _audioVideoInputOutputManager;
+    private ICacheService? _cacheService;
 
     public NvxState NvxState { get; internal set; } = new();
+
+    /// <summary>
+    /// Gets or sets the cache configuration.
+    /// </summary>
+    public CacheConfiguration? CacheConfiguration { get; set; }
 
     /// <summary>
     /// Gets the device information manager.
@@ -49,6 +55,11 @@ public partial class CrestribNvxSdk
     /// Gets the audio/video input/output manager.
     /// </summary>
     public IAudioVideoInputOutputManager AudioVideo => _audioVideoInputOutputManager!;
+
+    /// <summary>
+    /// Gets the cache service (if enabled).
+    /// </summary>
+    public ICacheService? Cache => _cacheService;
 
     /// <summary>
     /// Gets or sets the connection timeout.
@@ -92,6 +103,11 @@ public partial class CrestribNvxSdk
 
     private void InitializeManagers()
     {
+        // Initialize cache service based on configuration
+        _cacheService = CacheConfiguration != null 
+            ? new MemoryCacheService(CacheConfiguration)
+            : new NoCacheService();
+
         _deviceInfoManager = new DeviceInfoManager(_httpService, null);
         _deviceCapabilitiesManager = new DeviceCapabilitiesManager(_httpService, null);
         _avRoutingManager = new AvRoutingManager(_httpService, null);

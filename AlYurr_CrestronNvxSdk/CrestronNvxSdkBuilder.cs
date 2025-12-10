@@ -1,4 +1,5 @@
 using Serilog;
+using AlYurr_CrestronNvxSdk.Services;
 
 namespace AlYurr_CrestronNvxSdk;
 
@@ -14,6 +15,7 @@ public class CrestronNvxSdkBuilder
     private TimeSpan _timeout = TimeSpan.FromSeconds(30);
     private bool _autoReconnect = true;
     private int _maxRetries = 3;
+    private CacheConfiguration? _cacheConfiguration;
 
     /// <summary>
     /// Configures the device connection parameters.
@@ -63,6 +65,33 @@ public class CrestronNvxSdkBuilder
     }
 
     /// <summary>
+    /// Configures caching with default settings.
+    /// </summary>
+    public CrestronNvxSdkBuilder WithCaching()
+    {
+        _cacheConfiguration = new CacheConfiguration();
+        return this;
+    }
+
+    /// <summary>
+    /// Configures caching with custom settings.
+    /// </summary>
+    public CrestronNvxSdkBuilder WithCaching(CacheConfiguration configuration)
+    {
+        _cacheConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        return this;
+    }
+
+    /// <summary>
+    /// Disables caching.
+    /// </summary>
+    public CrestronNvxSdkBuilder WithoutCaching()
+    {
+        _cacheConfiguration = null;
+        return this;
+    }
+
+    /// <summary>
     /// Builds the CrestribNvxSdk instance with the configured settings.
     /// </summary>
     public CrestribNvxSdk Build()
@@ -74,7 +103,8 @@ public class CrestronNvxSdkBuilder
         {
             Timeout = _timeout,
             AutoReconnect = _autoReconnect,
-            MaxRetries = _maxRetries
+            MaxRetries = _maxRetries,
+            CacheConfiguration = _cacheConfiguration
         };
 
         return sdk;

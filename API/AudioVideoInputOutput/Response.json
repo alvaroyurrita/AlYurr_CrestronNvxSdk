@@ -1,0 +1,151 @@
+{
+  "Device": {
+    "AudioVideoInputOutput": {
+      "GlobalConfig": {
+        "CurrentEdid": "01 DM default",
+        "CurrentEdidType": "System"
+      },
+      "Inputs": [
+        {
+          "Name": "input0",
+          "EndpointExists": false,
+          "EndpointId": "Input1",
+          "Ports": [
+            {
+              "Power": {
+                "DmInputType": "OFF"
+              },
+              "AspectRatio": "NoSignal",
+              "Audio": {
+                "AudioTypeSelect": 1,
+                "Bass": 0,
+                "Digital": {
+                  "Channels": 0,
+                  "Format": "NoAudio"
+                },
+                "Mute": false,
+                "Treble": 0,
+                "Volume": 0
+              },
+              "Edid": {
+                "CurrentEdid": "01 DM default",
+                "EdidList": [
+                  {
+                    "Name": "Copy Output",
+                    "Type": "Auto  "
+                  },
+                  {
+                    "Name": "01 DM default",
+                    "Type": "System"
+                  },
+                  {
+                    "Name": "Laptop 16x9 1080p60 2ch",
+                    "Type": "System"
+                  },
+                  {
+                    "Name": "Laptop 16x10 1280x800 2ch",
+                    "Type": "System"
+                  },
+                  {
+                    "Name": "Laptop widescreen 2ch",
+                    "Type": "System"
+                  },
+                  {
+                    "Name": "Laptop 16x9 1080p50 2ch",
+                    "Type": "System"
+                  }
+                ]
+              },
+              "FramesPerSecond": 0,
+              "Hdmi": {
+                "HdcpReceiverCapability": "Disabled",
+                "HdcpState": "HDCPnotRequired",
+                "IsHdcpSupportEnabled": true,
+                "IsSourceHdcpActive": false,
+                "Status3D": 0,
+
+                "UnsupportedVideoDetected": true
+              },
+              "HorizontalResolution": 0,
+              "IsInterlacedDetected": false,
+              "IsSourceDetected": false,
+              "IsSyncDetected": false,
+              "PortType": "HDMI",
+              "Uuid": "ee665f83-58cf-4f16-b2ae-6dcea693b060",
+              "VerticalResolution": 0
+            }
+          ],
+          "Uuid": "9460ac0a-ceeb-4b64-88b6-269ff6e4c5fd",
+          "VideoPortTypeSelect": "Hdmi"
+        }
+      ],
+      "Outputs": [
+        {
+          "Name": "output0",
+          "EndpointExists": false,
+          "Ports": [
+            {
+              "AspectRatio": 169,
+              "Audio": {
+                "Bass": 0,
+                "Digital": {
+                  "Channels": 2,
+                  "Format": "Lpcm"
+                },
+                "Mute": false,
+                "Treble": 0,
+                "Volume": 0
+              },
+              "DownstreamEdid": {
+                "ManufacturerString": "ACI",
+                "NameString": "ASUS VH2",
+                "PrefTimingString": "1920x1080@60",
+                "SerialNumberString": 33443
+              },
+              "FramesPerSecond": 60,
+              "Hdmi": {
+                "DisabledByHdcp": false,
+                "HdcpState": "HDCPnotRequired",
+                "IsBlankingDisabled": true,
+                "IsHdcpForceDisabled": true,
+                "IsOutputDisabled": false,
+                "Status3D": 0,
+                "HdcpTransmitterMode": "Auto",
+                "ReceiveCecMessage": "",
+
+                "UnsupportedVideoDetected": true
+              },
+              "HorizontalResolution": 1920,
+              "IsInterlacedDetected": false,
+              "IsSinkConnected": true,
+              "IsVideoTimeOutEnabled": true,
+              "VideoTimeOut": 10,
+              "PortType": "HDMI",
+              "Resolution": "Auto",
+              "CecControl": {
+                "TransmitCecMessage": "Base64EncodedData",
+                "Format": "Hex",
+                "Delimiter": "LF",
+                "Type": "Custom",
+                "InputControl": {
+                  "TransmitCecMessage": "Base64EncodedData",
+                  "Format": "Hex",
+                  "Delimiter": "LF"
+                }
+              },
+              "ResolutionOptionsName": "AM200OutputResolutions",
+              "ResolutionOptionsVersion": "1.0.0",
+              "Orientation": "Landscape",
+              "Underscan": 192,
+              "Uuid": "f05490dc-aad7-49ac-b14a-7a69399c09db",
+              "VerticalResolution": 1080
+            }
+          ],
+          "Uuid": "bb65980a-80a6-4306-a0b3-3859696940ae",
+          "VideoPortTypeSelect": "Hdmi"
+        }
+      ],
+      "Version": "2.5.0"
+    }
+  }
+}

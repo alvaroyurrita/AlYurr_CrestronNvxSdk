@@ -1,0 +1,23 @@
+{
+  "Device": {
+    "AvRouting": {
+      "RouteControl": {
+        "IsLayer3Enabled": true,
+        "IsUsbFollowsVideoEnabled": false,
+        "IsChangeUsbRemoteDeviceEnabled": false,
+        "IsSecondaryAudioFollowsVideoEnabled": false
+      },
+      "Routes": [
+        {
+          "Name": "Routing0",
+          "AudioSource": "07147488-9e0b-11e7-abc4-cec278b6b50a",
+          "VideoSource": "07147488-9e0b-11e7-abc4-cec278b6b50a",
+          "UsbSource": "07147488-9e0b-11e7-abc4-cec278b6b50a",
+          "AutomaticStreamRoutingEnabled": false,
+          "UniqueId": "cc063ec3-d135-4413-9ee9-5a9264b5642c"
+        }
+      ],
+      "Version": "2.1.0"
+    }
+  }
+}

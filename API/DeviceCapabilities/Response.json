@@ -1,0 +1,25 @@
+{
+   "Device":{
+      "DeviceCapabilities":{
+         "IsConfigFileUploadSupported":true,
+         "IsLogFileUploadSupported":true,
+         "IsAncillaryDeviceFeatureSupported":true,
+         "AncillaryDevicesSupportedCount":5,
+         "IsDeviceMonitoringSupported":true,
+         "MonitoringDevicesSupportedCount":5,
+         "CCDFrameworkVersionSupported":"4.1.0.16",
+         "IsFeatureEnablementSupported":true,
+         "PortConfig":{
+            "NumberOfDmInputs":0,
+            "NumberOfDmOutputs":0,
+            "NumberOfEthernetAdapters":1,
+            "NumberOfHdmiInputs":2,
+            "NumberOfHdmiOutputs":1,
+            "NumberOfUsbCInputs":1,
+            "NumberOfUsbDevicePorts":2,
+            "NumberOfUsbHostPorts":1
+         },
+         "Version":"2.3.10"
+      }
+   }
+}

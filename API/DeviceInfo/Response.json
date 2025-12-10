@@ -1,0 +1,23 @@
+{
+   "Device":{
+      "DeviceInfo":{
+         "Model":"<model>",
+         "ModelSubType":"LM43QMNEBGC",
+         "Category":"<category>",
+         "Manufacturer":"Crestron",
+         "ModelId":"0x7A07",
+         "DeviceId":"TSID or UUID",
+         "DeviceCertId":"123e4567-e89b-12d3-a456-426614174000",
+         "SerialNumber":"12345",
+         "Name":"Friendly Name",
+         "DeviceVersion":"1.2.3",
+         "PufVersion":"1.3454.00040.001",
+         "BuildDate":"May 13 2016",
+         "DeviceKey":"54857",
+         "MacAddress":"<mac-address>",
+         "RebootReason":"poweron",
+         "Version":"2.3.1"
+      }
+   }
+}
+ 

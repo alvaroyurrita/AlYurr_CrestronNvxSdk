@@ -28,6 +28,7 @@ public partial class CrestribNvxSdk
     private IAvRoutingManager? _avRoutingManager;
     private IAudioVideoInputOutputManager? _audioVideoInputOutputManager;
     private ICacheService? _cacheService;
+    private IBatchManager? _batchManager;
 
     public NvxState NvxState { get; internal set; } = new();
 
@@ -60,6 +61,11 @@ public partial class CrestribNvxSdk
     /// Gets the cache service (if enabled).
     /// </summary>
     public ICacheService? Cache => _cacheService;
+
+    /// <summary>
+    /// Gets the batch operation manager for executing multiple operations.
+    /// </summary>
+    public IBatchManager Batch => _batchManager!;
 
     /// <summary>
     /// Gets or sets the connection timeout.
@@ -112,6 +118,7 @@ public partial class CrestribNvxSdk
         _deviceCapabilitiesManager = new DeviceCapabilitiesManager(_httpService, null);
         _avRoutingManager = new AvRoutingManager(_httpService, null);
         _audioVideoInputOutputManager = new AudioVideoInputOutputManager(_httpService, null);
+        _batchManager = new BatchManager(_audioVideoInputOutputManager, _avRoutingManager, _logger);
     }
     /// <summary>
     /// Connects to the NVX device and initializes the state.

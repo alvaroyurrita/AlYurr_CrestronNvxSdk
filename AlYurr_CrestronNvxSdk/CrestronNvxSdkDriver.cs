@@ -50,12 +50,12 @@ public partial class CrestronNvxSdk
     /// <summary>
     /// Gets the routing manager.
     /// </summary>
-    public IAvRoutingManager Routing => _avRoutingManager!;
+    public IAvRoutingManager AvRouting => _avRoutingManager!;
 
     /// <summary>
     /// Gets the audio/video input/output manager.
     /// </summary>
-    public IAudioVideoInputOutputManager AudioVideo => _audioVideoInputOutputManager!;
+    public IAudioVideoInputOutputManager AudioVideoInputOutput => _audioVideoInputOutputManager!;
 
     /// <summary>
     /// Gets the cache service (if enabled).
@@ -95,7 +95,7 @@ public partial class CrestronNvxSdk
         _logger = logger == null
             ? Log.Logger.ForContext<CrestronNvxSdk>()
             : logger.ForContext<CrestronNvxSdk>();
-        
+
         _httpService = new HttpService(_logger);
         _webSocketService = new WebSocketService(_logger);
         _cancellationTokenSource = new CancellationTokenSource();
@@ -110,7 +110,7 @@ public partial class CrestronNvxSdk
     private void InitializeManagers()
     {
         // Initialize cache service based on configuration
-        _cacheService = CacheConfiguration != null 
+        _cacheService = CacheConfiguration != null
             ? new MemoryCacheService(CacheConfiguration)
             : new NoCacheService();
 
@@ -130,28 +130,32 @@ public partial class CrestronNvxSdk
             _logger.Information("Connecting to NVX at {IpAddress}", _ipAddress);
 
             // Authenticate HTTP
+            var cookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                CookieContainer = cookieContainer
+            };
+            _httpService.SetHttpClientHandler(handler);
             var authenticated = await _httpService.AuthenticateAsync(
                 _ipAddress, _username, _password, _cancellationTokenSource.Token);
-            
+
             if (!authenticated)
             {
-                throw new AuthenticationException(_ipAddress, 
+                throw new AuthenticationException(_ipAddress,
                     $"Failed to authenticate with NVX device at {_ipAddress}");
             }
 
             // Load initial state
             _logger.Debug("Loading initial state from NVX at {IpAddress}", _ipAddress);
             var deviceState = await _httpService.GetRawAsync("/Device", _cancellationTokenSource.Token);
+            RouteMessageToManagers(deviceState);
             NvxState.RawDeviceJson = deviceState;
             _logger.Debug("Initial state loaded successfully");
 
-            // Get cookies for WebSocket
-            var httpClient = _httpService.GetHttpClient();
-            var handler = httpClient.GetHttpClientHandler();
-            if (handler?.CookieContainer is CookieContainer cookies)
-            {
-                ((WebSocketService)_webSocketService).SetCookies(cookies);
-            }
+            // Set cookies for WebSocket
+            _webSocketService.SetCookies(cookieContainer);
 
             // Connect WebSocket
             await _webSocketService.ConnectAsync(_ipAddress, _cancellationTokenSource.Token);
@@ -161,7 +165,7 @@ public partial class CrestronNvxSdk
             _webSocketService.Disconnected += OnWebSocketDisconnected;
 
             // Start listening for messages
-            Task.Run(async () => await _webSocketService.StartListeningAsync(_cancellationTokenSource.Token), 
+            Task.Run(async () => await _webSocketService.StartListeningAsync(_cancellationTokenSource.Token),
                 _cancellationTokenSource.Token);
 
             _logger.Information("Successfully connected to NVX at {IpAddress}", _ipAddress);
@@ -172,7 +176,7 @@ public partial class CrestronNvxSdk
         }
         catch (Exception ex)
         {
-            throw new ConnectionException(_ipAddress, 
+            throw new ConnectionException(_ipAddress,
                 $"Failed to connect to NVX device at {_ipAddress}", ex);
         }
     }
@@ -211,7 +215,7 @@ public partial class CrestronNvxSdk
         {
             _logger.Debug("Processing WebSocket message update");
             NvxState.MergeJson(e.Message);
-            
+
             // Route messages to appropriate managers
             RouteMessageToManagers(e.Message);
         }
@@ -228,58 +232,61 @@ public partial class CrestronNvxSdk
             using var doc = JsonDocument.Parse(jsonMessage);
             var root = doc.RootElement;
 
-            // Route to DeviceInfo manager
             if (root.TryGetProperty("Device", out var deviceElement))
             {
-                if (_deviceInfoManager is DeviceInfoManager dimgr)
+                // Route to DeviceInfo manager
+                if (deviceElement.TryGetProperty("DeviceInfo", out var deviceInfoElement))
                 {
-                    var deviceJson = deviceElement.GetRawText();
-                    var deviceInfo = JsonSerializer.Deserialize<Models.DeviceInfo.DeviceInfoDto>(deviceJson, _jsonOptions);
-                    if (deviceInfo != null)
+                    if (_deviceInfoManager is DeviceInfoManager dimgr)
                     {
-                        dimgr.State.Data = deviceInfo;
+                        var deviceJson = deviceInfoElement.GetRawText();
+                        var deviceInfo = JsonSerializer.Deserialize<Models.DeviceInfo.DeviceInfoDto>(deviceJson, _jsonOptions);
+                        if (deviceInfo != null)
+                        {
+                            dimgr.State.Data = deviceInfo;
+                        }
                     }
                 }
-            }
 
-            // Route to DeviceCapabilities manager
-            if (root.TryGetProperty("Capabilities", out var capElement))
-            {
-                if (_deviceCapabilitiesManager is DeviceCapabilitiesManager dcmgr)
+                // Route to DeviceCapabilities manager
+                if (deviceElement.TryGetProperty("DeviceCapabilities", out var capElement))
                 {
-                    var capJson = capElement.GetRawText();
-                    var capabilities = JsonSerializer.Deserialize<Models.DeviceCapabilities.DeviceCapabilitiesDto>(capJson, _jsonOptions);
-                    if (capabilities != null)
+                    if (_deviceCapabilitiesManager is DeviceCapabilitiesManager dcmgr)
                     {
-                        dcmgr.State.Data = capabilities;
+                        var capJson = capElement.GetRawText();
+                        var capabilities = JsonSerializer.Deserialize<Models.DeviceCapabilities.DeviceCapabilitiesDto>(capJson, _jsonOptions);
+                        if (capabilities != null)
+                        {
+                            dcmgr.State.Data = capabilities;
+                        }
                     }
                 }
-            }
 
-            // Route to AvRouting manager
-            if (root.TryGetProperty("Routing", out var routingElement))
-            {
-                if (_avRoutingManager is AvRoutingManager amgr)
+                // Route to AvRouting manager
+                if (deviceElement.TryGetProperty("AvRouting", out var routingElement))
                 {
-                    var routingJson = routingElement.GetRawText();
-                    var routing = JsonSerializer.Deserialize<Models.AvRouting.AvRoutingDto>(routingJson, _jsonOptions);
-                    if (routing != null)
+                    if (_avRoutingManager is AvRoutingManager amgr)
                     {
-                        amgr.State.Data = routing;
+                        var routingJson = routingElement.GetRawText();
+                        var routing = JsonSerializer.Deserialize<Models.AvRouting.AvRoutingDto>(routingJson, _jsonOptions);
+                        if (routing != null)
+                        {
+                            amgr.State.Data = routing;
+                        }
                     }
                 }
-            }
 
-            // Route to AudioVideoInputOutput manager
-            if (root.TryGetProperty("AudioVideoInputOutput", out var avElement))
-            {
-                if (_audioVideoInputOutputManager is AudioVideoInputOutputManager avmgr)
+                // Route to AudioVideoInputOutput manager
+                if (deviceElement.TryGetProperty("AudioVideoInputOutput", out var avElement))
                 {
-                    var avJson = avElement.GetRawText();
-                    var audioVideo = JsonSerializer.Deserialize<Models.AudioVideoInputOutput.AudioVideoInputOutputDto>(avJson, _jsonOptions);
-                    if (audioVideo != null)
+                    if (_audioVideoInputOutputManager is AudioVideoInputOutputManager avmgr)
                     {
-                        avmgr.State.Data = audioVideo;
+                        var avJson = avElement.GetRawText();
+                        var audioVideo = JsonSerializer.Deserialize<Models.AudioVideoInputOutput.AudioVideoInputOutputDto>(avJson, _jsonOptions);
+                        if (audioVideo != null)
+                        {
+                            avmgr.State.Data = audioVideo;
+                        }
                     }
                 }
             }
@@ -293,7 +300,7 @@ public partial class CrestronNvxSdk
     private void OnWebSocketDisconnected(object? sender, EventArgs e)
     {
         _logger.Warning("WebSocket disconnected from NVX at {IpAddress}", _ipAddress);
-        
+
         if (AutoReconnect)
         {
             _logger.Information("Attempting to reconnect to NVX at {IpAddress}", _ipAddress);
@@ -316,12 +323,12 @@ public partial class CrestronNvxSdk
             catch (Exception ex)
             {
                 retryCount++;
-                _logger.Warning(ex, "Reconnection attempt {Attempt} of {MaxRetries} failed for NVX at {IpAddress}", 
+                _logger.Warning(ex, "Reconnection attempt {Attempt} of {MaxRetries} failed for NVX at {IpAddress}",
                     retryCount, MaxRetries, _ipAddress);
             }
         }
 
-        _logger.Error("Failed to reconnect to NVX at {IpAddress} after {MaxRetries} attempts", 
+        _logger.Error("Failed to reconnect to NVX at {IpAddress} after {MaxRetries} attempts",
             _ipAddress, MaxRetries);
     }
 }

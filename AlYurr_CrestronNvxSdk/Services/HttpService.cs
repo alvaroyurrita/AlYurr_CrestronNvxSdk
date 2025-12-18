@@ -10,6 +10,7 @@ namespace AlYurr_CrestronNvxSdk.Services;
 public class HttpService : IHttpService
 {
     private HttpClient? _httpClient;
+    private HttpClientHandler? _httpClientHandler;
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly ILogger _logger;
     private string _ipAddress = string.Empty;
@@ -26,6 +27,11 @@ public class HttpService : IHttpService
         };
     }
 
+    public void SetHttpClientHandler(HttpClientHandler handler)
+    {
+        _httpClientHandler = handler;
+    }
+
     public async Task<bool> AuthenticateAsync(string ipAddress, string username, string password, CancellationToken cancellationToken = default)
     {
         try
@@ -34,14 +40,13 @@ public class HttpService : IHttpService
             _logger.Debug("Authenticating to NVX at {IpAddress}", ipAddress);
 
             var credentials = $"login={username}&&passwd={password}";
-            var handler = new HttpClientHandler
-            {
-                ClientCertificateOptions = ClientCertificateOption.Manual,
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
-                CookieContainer = new CookieContainer()
-            };
 
-            _httpClient = new HttpClient(handler);
+            if (_httpClientHandler == null)
+            {
+                _logger.Error("No Http Client Handler Set");
+                return false;
+            }
+            _httpClient = new HttpClient(_httpClientHandler);
 
             using var body = new StringContent(credentials);
             var nvxUri = $"https://{ipAddress}/userlogin.html";

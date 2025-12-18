@@ -13,7 +13,7 @@ public class RouteControlDto
     public bool IsLayer3Enabled { get; set; }
 
     /// <summary>
-    /// Gets or sets whether USB follows video routing.
+    /// Gets or sets whether USB follows video is enabled.
     /// </summary>
     public bool IsUsbFollowsVideoEnabled { get; set; }
 
@@ -23,7 +23,7 @@ public class RouteControlDto
     public bool IsChangeUsbRemoteDeviceEnabled { get; set; }
 
     /// <summary>
-    /// Gets or sets whether secondary audio follows video routing.
+    /// Gets or sets whether secondary audio follows video is enabled.
     /// </summary>
     public bool IsSecondaryAudioFollowsVideoEnabled { get; set; }
 }
@@ -34,22 +34,22 @@ public class RouteControlDto
 public class RouteDto
 {
     /// <summary>
-    /// Gets or sets the route name.
+    /// Gets or sets the name of the stream object.
     /// </summary>
     public string? Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the unique ID of the audio source (UUID).
+    /// Gets or sets the unique identifier for the desired audio source
     /// </summary>
     public string? AudioSource { get; set; }
 
     /// <summary>
-    /// Gets or sets the unique ID of the video source (UUID).
+    /// Gets or sets the unique identifier for the desired video source
     /// </summary>
     public string? VideoSource { get; set; }
 
     /// <summary>
-    /// Gets or sets the unique ID of the USB source (UUID).
+    /// Gets or sets the unique identifier for the desired USB source
     /// </summary>
     public string? UsbSource { get; set; }
 
@@ -84,7 +84,9 @@ public class AvRoutingDto
     /// </summary>
     public string? Version { get; set; }
 }
-
+//TODO: Check consistency between RouteControlState and RouteState property setters
+//Seems like RouteControlState has extra logic in the setters that RouteState lacks. It is also generating events whenever a property is set
+//Should this happen everywhere or only in RouteControlState or remove it from there?
 /// <summary>
 /// State object for route control.
 /// </summary>
@@ -162,7 +164,7 @@ public class RouteControlState : StateBase
         }
     }
 }
-
+//TODO: Some of these properties should have setters since they accept post.
 /// <summary>
 /// State object for an individual route.
 /// </summary>

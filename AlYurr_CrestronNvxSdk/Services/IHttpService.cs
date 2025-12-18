@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.WebSockets;
 
 namespace AlYurr_CrestronNvxSdk.Services;
@@ -69,6 +70,12 @@ public interface IHttpService
     /// Gets the underlying HttpClient for advanced scenarios.
     /// </summary>
     HttpClient GetHttpClient();
+
+    /// <summary>
+    /// Sets the HttpClientHandler for the HTTP client.
+    /// </summary>
+    /// <param name="handler"></param>
+    void SetHttpClientHandler(HttpClientHandler handler);
 }
 
 /// <summary>
@@ -125,6 +132,12 @@ public interface IWebSocketService
     /// Event fired when the WebSocket is disconnected.
     /// </summary>
     event EventHandler? Disconnected;
+
+    /// <summary>
+    /// Sets the cookies for WebSocket authentication.
+    /// </summary>  
+    public void SetCookies(CookieContainer cookies);
+
 }
 
 /// <summary>

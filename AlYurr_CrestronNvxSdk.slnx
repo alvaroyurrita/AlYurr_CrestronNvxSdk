@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="AlYurr_CrestronNvxSdk.Tests/AlYurr_CrestronNvxSdk.Tests.csproj" />
   <Project Path="AlYurr_CrestronNvxSdk/AlYurr_CrestronNvxSdk.csproj" />
+  <Project Path="CrestonNvxSdkEndToEndApp/CrestonNvxSdkEndToEndApp.csproj" Id="8c4109e2-ef9b-41bb-a8cf-220f7b019ab8" />
 </Solution>

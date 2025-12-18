@@ -58,7 +58,9 @@ public class HdmiInputDto
     public bool IsCecErrorDetected { get; set; }
     public ushort Status3D { get; set; }
     public string? ReceiveCecMessage { get; set; }
+    public string? TransmitCecMessage { get; set; }
     public bool UnsupportedVideoDetected { get; set; }
+    public string? Name { get; set; }
 }
 
 /// <summary>
@@ -92,6 +94,7 @@ public class InputDto
     public string? Uuid { get; set; }
     public bool EndpointExists { get; set; }
     public string? EndpointId { get; set; }
+    public string? Version { get; set; }
     public string? VideoPortTypeSelect { get; set; } // "Hdmi", "Vga", "Bnc", "Auto"
     public List<InputPortDto>? Ports { get; set; }
 }
@@ -137,9 +140,12 @@ public class HdmiOutputDto
     public bool IsOutputDisabled { get; set; }
     public string? HdcpState { get; set; }
     public bool IsCecInError { get; set; }
+    public string? Name { get; set; }
     public string? ReceiveCecMessage { get; set; }
     public string? HdcpTransmitterMode { get; set; } // "Auto", "FollowInput", "Always", "Never"
     public bool UnsupportedVideoDetected { get; set; }
+    public string? TransmitCecMessage { get; set; }
+    public bool Transmitting { get; set; }
 }
 
 /// <summary>
@@ -151,6 +157,7 @@ public class OutputPortDto
     public string? Uuid { get; set; }
     public bool IsSinkConnected { get; set; }
     public bool IsSourceDetected { get; set; }
+    public bool IsInterlacedDetected { get; set; }
     public string? ColorSpace { get; set; }
     public string? ColorDepth { get; set; }
     public string? ColorSpaceMode { get; set; }
@@ -183,6 +190,7 @@ public class OutputDto
     public string? Name { get; set; }
     public string? Uuid { get; set; }
     public bool EndpointExists { get; set; }
+    public string? Version { get; set; }
     public string? VideoPortTypeSelect { get; set; }
     public List<OutputPortDto>? Ports { get; set; }
 }
@@ -232,7 +240,9 @@ public class AudioVideoInputOutputState : StateBase
     }
 
     public List<InputState> Inputs => _inputStates;
-    public List<OutputState> _outputStates_internal => _outputStates;
+    //todo: change name to Outputs
+    public List<OutputState> Outputs => _outputStates;
+    public GlobalConfigDto GlobalConfig => _data.GlobalConfig;
     public string? Version => _data.Version;
 
     private void UpdateInputAndOutputStates()
@@ -282,6 +292,7 @@ public class InputState : StateBase
     public bool EndpointExists => _data.EndpointExists;
     public string? EndpointId => _data.EndpointId;
     public string? VideoPortTypeSelect => _data.VideoPortTypeSelect;
+    public string? Version => _data.Version;
     public List<InputPortDto>? Ports => _data.Ports;
 }
 
@@ -309,5 +320,6 @@ public class OutputState : StateBase
     public string? Uuid => _data.Uuid;
     public bool EndpointExists => _data.EndpointExists;
     public string? VideoPortTypeSelect => _data.VideoPortTypeSelect;
+    public string? Version => _data.Version;
     public List<OutputPortDto>? Ports => _data.Ports;
 }

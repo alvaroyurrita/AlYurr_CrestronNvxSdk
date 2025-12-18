@@ -10,7 +10,7 @@ public partial class CrestronNvxSdk
     /// <summary>
     /// Parses a complete device state message and updates internal state.
     /// </summary>
-    public void FullMessageParser(string deviceJson)
+    internal void FullMessageParser(string deviceJson)
     {
         try
         {
@@ -27,7 +27,7 @@ public partial class CrestronNvxSdk
     /// <summary>
     /// Parses a partial state update message.
     /// </summary>
-    public void PartialMessageParser(string partialJson)
+    internal void PartialMessageParser(string partialJson)
     {
         try
         {

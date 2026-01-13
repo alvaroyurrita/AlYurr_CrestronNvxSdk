@@ -65,7 +65,7 @@ public class HttpService : IHttpService
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error during authentication to NVX at {IpAddress}", ipAddress);
+            _logger.Error("Error during authentication to NVX at {IpAddress}: {ExceptionMessage}", ipAddress, ex.Message);
             return false;
         }
     }

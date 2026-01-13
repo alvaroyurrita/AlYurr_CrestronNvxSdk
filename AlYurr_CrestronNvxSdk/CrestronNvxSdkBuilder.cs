@@ -13,7 +13,7 @@ public class CrestronNvxSdkBuilder
     private string _password = string.Empty;
     private ILogger? _logger;
     private TimeSpan _timeout = TimeSpan.FromSeconds(30);
-    private bool _autoReconnect = true;
+    private bool _autoReconnect = false;
     private int _maxRetries = 3;
     private CacheConfiguration? _cacheConfiguration;
 
@@ -60,9 +60,17 @@ public class CrestronNvxSdkBuilder
     /// </summary>
     public CrestronNvxSdkBuilder WithMaxRetries(int maxRetries)
     {
+        _autoReconnect = true;
         _maxRetries = maxRetries;
         return this;
     }
+
+    public CrestronNvxSdkBuilder WithIndefiniteRetries()
+    {
+        _autoReconnect = true;
+        _maxRetries = 0;
+        return this;
+    }   
 
     /// <summary>
     /// Configures caching with default settings.

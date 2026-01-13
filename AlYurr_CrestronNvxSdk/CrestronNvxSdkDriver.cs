@@ -80,6 +80,9 @@ public partial class CrestronNvxSdk
     /// <summary>
     /// Gets or sets the maximum number of connection retries.
     /// </summary>
+    /// <remarks>
+    /// Setting the Maximum Number of retries to 0, will retry indefintley
+    /// </remarks>
     public int MaxRetries { get; set; } = 3;
 
     /// <summary>
@@ -127,7 +130,6 @@ public partial class CrestronNvxSdk
     {
         try
         {
-            _logger.Information("Connecting to NVX at {IpAddress}", _ipAddress);
 
             // Authenticate HTTP
             var cookieContainer = new CookieContainer();
@@ -138,11 +140,48 @@ public partial class CrestronNvxSdk
                 CookieContainer = cookieContainer
             };
             _httpService.SetHttpClientHandler(handler);
-            var authenticated = await _httpService.AuthenticateAsync(
-                _ipAddress, _username, _password, _cancellationTokenSource.Token);
-
-            if (!authenticated)
+            var connectionTrys = 0;
+            bool authenticated = false;
+            var retryTime = 1;
+            do
             {
+                _logger.Information("Connecting to NVX at {IpAddress}", _ipAddress);
+                bool authenticationException = false;
+                try
+                {
+                    authenticated = await _httpService.AuthenticateAsync(_ipAddress, _username, _password, _cancellationTokenSource.Token);
+                }
+                catch 
+                {
+                    authenticationException = true;
+                }
+                if (!AutoReconnect)
+                {
+                    throw new AuthenticationException(_ipAddress,
+                        $"Failed to authenticate with NVX device at {_ipAddress}");
+                }
+                if (!authenticated || authenticationException)
+                {
+                    retryTime  = retryTime << 1;
+                    if (retryTime >= 64) retryTime = 64;
+                    if (MaxRetries == 0)
+                    {
+                        _logger.Error("Error during authentication attempt for NVX at {IpAddress}. Retrying in {retryTime} seconds",
+                            _ipAddress, retryTime);
+
+                    }
+                    else 
+                    {
+                        _logger.Error("Error during authentication attempt {Attempt} or {MaxAttempts} for NVX at {IpAddress}. Retrying in {retryTime} seconds",
+                             ++connectionTrys, MaxRetries, _ipAddress, retryTime);
+                    }
+                    await Task.Delay(retryTime * 1000, _cancellationTokenSource.Token); // Wait before retrying
+                }
+            } while (!authenticated && (!(MaxRetries != 0) || connectionTrys < MaxRetries));
+
+            if (!authenticated || connectionTrys >= MaxRetries)
+            {
+                _logger.Error("Exceeded maximum authentication attempts for NVX at {IpAddress}", _ipAddress);
                 throw new AuthenticationException(_ipAddress,
                     $"Failed to authenticate with NVX device at {_ipAddress}");
             }
@@ -204,7 +243,7 @@ public partial class CrestronNvxSdk
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error during disconnection from NVX at {IpAddress}", _ipAddress);
+            _logger.Error("Error during disconnection from NVX at {IpAddress}: {ExceptionMessage}", _ipAddress, ex.Message);
             throw;
         }
     }
@@ -221,7 +260,7 @@ public partial class CrestronNvxSdk
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error processing WebSocket message");
+            _logger.Error("Error processing WebSocket message: {ExceptionMessage}", ex.Message);
         }
     }
 
@@ -293,7 +332,7 @@ public partial class CrestronNvxSdk
         }
         catch (Exception ex)
         {
-            _logger.Warning(ex, "Error routing message to managers");
+            _logger.Warning("Error routing message to managers: {ExceptionMessage}", ex.Message);
         }
     }
 
@@ -304,11 +343,11 @@ public partial class CrestronNvxSdk
         if (AutoReconnect)
         {
             _logger.Information("Attempting to reconnect to NVX at {IpAddress}", _ipAddress);
-            Task.Run(ReconnectAsync);
+            Task.Run(ReconnectWebSocketAsync);
         }
     }
 
-    private async Task ReconnectAsync()
+    private async Task ReconnectWebSocketAsync()
     {
         int retryCount = 0;
         while (retryCount < MaxRetries)
